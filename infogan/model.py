@@ -7,6 +7,8 @@ from torch.utils.data.dataloader import DataLoader
 from torch.distributions.uniform import Uniform
 from torch.distributions.one_hot_categorical import OneHotCategorical
 from torch.optim import Adam
+from matplotlib import pyplot as plt
+from IPython.display import clear_output
 import math
 from tqdm.auto import tqdm
 import os
@@ -219,7 +221,16 @@ class InfoGAN(nn.Module):
             p_bar.set_description("Loss: {:.4f}".format(running_loss/(i+1)))
             self.gen_optimizer.step()
             self.disc_optimizer.step()
-            
+
+    def illustrate(self, n: int) -> None:
+        batch, _ = self.generate_batch(n**2)
+        with torch.no_grad():
+            images = self.generator(batch)
+        clear_output(wait=True)
+        _, axes = plt.subplots(n, n, figsize=(10, 10))
+        for i in range(n**2):
+            axes[i//n, i%n].imshow(images.cpu().numpy()[i, 0, ...])    
+
     def fit(self, n_epochs) -> None:
         for _ in range(n_epochs):
             self.train_one_epoch()
