@@ -26,14 +26,16 @@ class Generator(nn.Module):
         self.fc2 = nn.Linear(num_hidden_feat, 16*self.img_size_h*self.img_size_w)
         self.bn2 = nn.BatchNorm1d(16*self.img_size_h*self.img_size_w)
 
-        self.conv1 = nn.ConvTranspose2d(16, 8, kernel_size=(3, 3))
-        self.cbn1 = nn.BatchNorm2d(8)
-        self.up1 = nn.ConvTranspose2d(8, 8, kernel_size=(2, 2), stride=2)
+        self.conv1 = nn.ConvTranspose2d(16, 32, kernel_size=(3, 3))
+        self.cbn1 = nn.BatchNorm2d(32)
+        self.up1 = nn.ConvTranspose2d(32, 64, kernel_size=(2, 2), stride=2)
         if dataset == 'CelebA':
-            self.conv2 = nn.ConvTranspose2d(8, 8, kernel_size=(3, 3))
-            self.cbn2 = nn.BatchNorm2d(8)
-            self.up2 = nn.ConvTranspose2d(8, 8, kernel_size=(2, 2), stride=2)
-        self.conv3 = nn.ConvTranspose2d(8, output_channels, kernel_size=(3, 3))
+            self.conv2 = nn.ConvTranspose2d(64, 64, kernel_size=(3, 3))
+            self.cbn2 = nn.BatchNorm2d(64)
+            self.up2 = nn.ConvTranspose2d(64, 64, kernel_size=(2, 2), stride=2)
+        self.conv3 = nn.ConvTranspose2d(64, 16, kernel_size=(3, 3))
+        self.cbn3 = nn.BatchNorm2d(16)
+        self.conv4 = nn.Conv2d(16, output_channels, kernel_size=(3, 3), padding=(1, 1))
     
     def forward(self, x: Tensor) -> Tensor:
         x = self.bn1(self.fc1(x)).relu()
@@ -42,7 +44,8 @@ class Generator(nn.Module):
         x = self.up1(self.cbn1(self.conv1(x)).relu())
         if self.dataset == 'CelebA':
             x = self.up2(self.cbn2(self.conv2(x)).relu())
-        x = self.conv3(x).sigmoid()
+        x = self.cbn3(self.conv3(x)).relu()
+        x = self.conv4(x).sigmoid()
         return x
 
 
@@ -97,19 +100,19 @@ class InfoGAN(nn.Module):
         parametric_features = sum(categorical_features) + uniform_features + guassian_features
         channels = 3 if dataset == 'CelebA' else 1
 
+        self.device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
         self.generator = Generator(noise_features=noise_features, 
                                    parametric_features=parametric_features,
                                    before_conv_size=inter_img_size, 
                                    output_channels=channels, 
-                                   dataset=dataset)
+                                   dataset=dataset).to(self.device)
 
         self.info_discriminator = InfoDiscriminator(categorical_features=sum(categorical_features),
                                                     non_categorical_features=uniform_features + guassian_features,
                                                     after_conv_size=inter_img_size,
                                                     input_channels=channels,
-                                                    dataset=dataset)
+                                                    dataset=dataset).to(self.device)
 
-        self.device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
         self.lambda_ = lambda_
 
         self.train_dataset = None
@@ -177,7 +180,7 @@ class InfoGAN(nn.Module):
             prob_gen, _, _, _ = self.info_discriminator(gen_images)
             prob_real, _, _, _ = self.info_discriminator(real_images)
 
-            dis_loss = -torch.log(prob_real).mean() - torch.log(1 - prob_gen).mean()
+            dis_loss = -torch.log(prob_real).mean() -torch.log(1 - prob_gen).mean()
             dis_loss.backward()
             self.disc_optimizer.step()
 
@@ -186,7 +189,7 @@ class InfoGAN(nn.Module):
 
             gen_input, gen_categories = self.generate_batch(self.batch_size)
             # print(gen_categories)
-            gen_categories = torch.vstack(gen_categories).T
+            gen_categories = torch.vstack(gen_categories).T.to(self.device)
             # print('gen_categories:', gen_categories)
             gen_images = self.generator(gen_input)
 
@@ -212,7 +215,7 @@ class InfoGAN(nn.Module):
 
             (info_loss + gen_loss).backward()
 
-            running_loss += dis_loss.item() + info_loss.item()
+            running_loss += dis_loss.item() + gen_loss.item() + info_loss.item()
             p_bar.set_description("Loss: {:.4f}".format(running_loss/(i+1)))
             self.gen_optimizer.step()
             self.disc_optimizer.step()
