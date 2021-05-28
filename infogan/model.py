@@ -231,9 +231,10 @@ class InfoGAN(nn.Module):
         for i in range(n**2):
             axes[i//n, i%n].imshow(images.cpu().numpy()[i, 0, ...])    
 
-    def fit(self, n_epochs) -> None:
+    def fit(self, n_epochs, k=4) -> None:
         for _ in range(n_epochs):
             self.train_one_epoch()
+            self.illustrate(k)
 
 
 
