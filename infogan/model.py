@@ -229,7 +229,8 @@ class InfoGAN(nn.Module):
         clear_output(wait=True)
         _, axes = plt.subplots(n, n, figsize=(10, 10))
         for i in range(n**2):
-            axes[i//n, i%n].imshow(images.cpu().numpy()[i, 0, ...])    
+            axes[i//n, i%n].imshow(images.cpu().numpy()[i, 0, ...])
+        plt.show()    
 
     def fit(self, n_epochs, k=4) -> None:
         for _ in range(n_epochs):
