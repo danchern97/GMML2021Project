@@ -123,6 +123,10 @@ class InfoGAN(nn.Module):
         self.gen_optimizer = Adam(self.generator.parameters(), gen_lr)
         self.disc_optimizer = Adam(self.info_discriminator.parameters(), disc_lr)
 
+        self.gen_loss_log = []
+        self.disc_loss_log = []
+        self.info_loss_log = []
+
         self.load_data(dataset, self.batch_size)
 
     def load_data(self, dataset, batch_size) -> None:
@@ -183,6 +187,7 @@ class InfoGAN(nn.Module):
             prob_real, _, _, _ = self.info_discriminator(real_images)
 
             dis_loss = -torch.log(prob_real).mean() -torch.log(1 - prob_gen).mean()
+            self.disc_loss_log.append(dis_loss.item())
             dis_loss.backward()
             self.disc_optimizer.step()
 
@@ -199,6 +204,7 @@ class InfoGAN(nn.Module):
             post_ncatvar = torch.exp(post_ncat_logvar)
 
             gen_loss = -torch.log(prob_gen).mean()
+            self.gen_loss_log.append(gen_loss.item())
             # print('prob_gen:\n',prob_gen)
             # print('post_cat:\n', post_cat)
             # print('post_ncat (mean + logvar):\n', post_ncat_mean, post_ncat_logvar)
@@ -214,7 +220,7 @@ class InfoGAN(nn.Module):
             info_loss += self.lambda_ * gaussian_nnl(post_ncat_mean, 
                                                      torch.zeros_like(post_ncat_mean), 
                                                      post_ncatvar)
-
+            self.info_loss_log.append(-info_loss.item())
             (info_loss + gen_loss).backward()
 
             running_loss += dis_loss.item() + gen_loss.item() + info_loss.item()
@@ -230,7 +236,18 @@ class InfoGAN(nn.Module):
         _, axes = plt.subplots(n, n, figsize=(10, 10))
         for i in range(n**2):
             axes[i//n, i%n].imshow(images.cpu().numpy()[i, 0, ...])
-        plt.show()    
+        plt.show()
+        _, axes = plt.subplots(ncols=3, figsize=(18, 6), dpi=100)
+        axes[0].plot(self.gen_loss_log)
+        axes[1].plot(self.disc_loss_log)
+        axes[2].plot(self.info_loss_log)
+        axes[0].grid()
+        axes[1].grid()
+        axes[2].grid()
+        axes[0].set_title('Generator loss')
+        axes[1].set_title('Discriminator loss')
+        axes[2].set_title('Mutual Info loss')
+
 
     def fit(self, n_epochs, k=4) -> None:
         for _ in range(n_epochs):
