@@ -134,7 +134,7 @@ class InfoGAN(nn.Module):
             self.train_dataset = datasets.CelebA(root='../data', split='train', 
                                                  transform=ToTensor(), download=download)
 
-        self.train_dataloader = DataLoader(self.train_dataset, batch_size=batch_size)
+        self.train_dataloader = DataLoader(self.train_dataset, batch_size=batch_size, shuffle=True)
 
     def generate_input(self) -> torch.Tensor:
         noise_input = torch.randn(self.feature_spec['noise'])
@@ -234,7 +234,9 @@ class InfoGAN(nn.Module):
 
     def fit(self, n_epochs, k=4) -> None:
         for _ in range(n_epochs):
+            self.train()
             self.train_one_epoch()
+            self.eval()
             self.illustrate(k)
 
 
