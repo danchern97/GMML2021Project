@@ -226,6 +226,7 @@ class InfoGAN(nn.Module):
             running_loss += dis_loss.item() + gen_loss.item() + info_loss.item()
             p_bar.set_description("Loss: {:.4f}".format(running_loss/(i+1)))
             self.gen_optimizer.step()
+            self.info_discriminator.out_d.zero_grad()
             self.disc_optimizer.step()
 
     def illustrate(self, n: int) -> None:
