@@ -189,10 +189,12 @@ class InfoGAN(nn.Module):
             dis_loss = -torch.log(prob_real).mean() -torch.log(1 - prob_gen).mean()
             self.disc_loss_log.append(dis_loss.item())
             dis_loss.backward()
+            nn.utils.clip_grad_norm_(self.info_discriminator.parameters(), 1)
             self.disc_optimizer.step()
 
             # Generator and Posterior optimization steps
             self.disc_optimizer.zero_grad()
+            self.gen_optimizer.zero_grad()
 
             gen_input, gen_categories = self.generate_batch(self.batch_size)
             # print(gen_categories)
@@ -225,8 +227,11 @@ class InfoGAN(nn.Module):
 
             running_loss += dis_loss.item() + gen_loss.item() + info_loss.item()
             p_bar.set_description("Loss: {:.4f}".format(running_loss/(i+1)))
+
+            nn.utils.clip_grad_norm_(self.generator.parameters(), 1)
             self.gen_optimizer.step()
             self.info_discriminator.out_d.zero_grad()
+            nn.utils.clip_grad_norm_(self.info_discriminator.parameters(), 1)
             self.disc_optimizer.step()
 
     def illustrate(self, n: int) -> None:
