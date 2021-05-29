@@ -236,7 +236,6 @@ class InfoGAN(nn.Module):
         _, axes = plt.subplots(n, n, figsize=(10, 10))
         for i in range(n**2):
             axes[i//n, i%n].imshow(images.cpu().numpy()[i, 0, ...])
-        plt.show()
         _, axes = plt.subplots(ncols=3, figsize=(18, 6), dpi=100)
         axes[0].plot(self.gen_loss_log)
         axes[1].plot(self.disc_loss_log)
@@ -247,6 +246,8 @@ class InfoGAN(nn.Module):
         axes[0].set_title('Generator loss')
         axes[1].set_title('Discriminator loss')
         axes[2].set_title('Mutual Info loss')
+        plt.show()
+
 
 
     def fit(self, n_epochs, k=4) -> None:
