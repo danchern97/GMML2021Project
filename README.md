@@ -2,6 +2,7 @@
 Project on Skoltech course "Geometric Methods in Machine Learning" on topic "Disentangled Representation Learning as Nonlinear ICA".
 
 ![MNIST](https://ibb.co/103Xv5L)
+
 *Gradually changing one feature of NonlinearICA model on MNIST, responsible for line thickness.*
 
 ## Authors
