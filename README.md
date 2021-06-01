@@ -1,8 +1,7 @@
 # GMML2021Project
 Project on Skoltech course "Geometric Methods in Machine Learning" on topic "Disentangled Representation Learning as Nonlinear ICA".
 
-<blockquote class="imgur-embed-pub" lang="en" data-id="TONdCeH"><a href="https://imgur.com/TONdCeH">View post on imgur.com</a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
-
+![MNIST](https://i.imgur.com/TONdCeH.png)
 *Gradually changing one feature of NonlinearICA model on MNIST, responsible for line thickness.*
 
 ## Authors
