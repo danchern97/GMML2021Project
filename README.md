@@ -21,6 +21,8 @@ pip3 install -r requirements.txt
 
 To train Nonlinear ICA model and investigate what features may be mean, please refer to the [Nonlinear ICA](https://github.com/danchern97/GMML2021Project/blob/nonlinear_ica/nonlinear_ica/NonLinearICA.ipynb) notebook.
 
+For InfoGAN training, please refer to [InfoGAN folder](https://github.com/danchern97/GMML2021Project/tree/main/infogan)
+
 ## Pretrained models
 
 Already pretrained models for MNIST and CelebA can be found [here](https://drive.google.com/drive/folders/1_AehTiuZSL6mJ-9MEquCoZtRuB6t879q?usp=sharing).
