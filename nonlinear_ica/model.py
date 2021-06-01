@@ -7,7 +7,16 @@ import torch.nn as nn
 
 class PsiICA(nn.Module):
     def __init__(self, u_dim, dropout=0.25):
-        """ """
+        """ 
+        The Psi submodule of Nonlinear PCA.
+        
+        This class is made for a convinience in writing of the main NonLinearICA class. It's role is to accept the u variable and the h_i(x), concatenate it and make a prediction.
+        
+        Args:
+            u_dim (int): the dimension of the encoding of auxiliary variable.
+            dropout (float, optional): the dropout probability. Default 0.25
+        
+        """
         super().__init__()
         self.m = nn.Sequential(*[
             nn.ReLU(), 
@@ -25,7 +34,17 @@ class PsiICA(nn.Module):
 class NonLinearICA(nn.Module):
     def __init__(self, in_channels, n, dropout=0.25, data_type='CelebA'):
         """
+        The main module for NonlinearICA fit.
         
+        The model is based on convolutional NN and tt's only adapted to be trained on either CelebA or MNIST datasets.
+        The `forward_h` method is used to provide the hidden representation h(x).
+        The `forward` method provides a prediction of wheather a pair of (x, u) is original or is permuted. 
+        
+        Args:
+            in_channels (int): number of channels of the input image
+            n (int): number of independent sources (latent features)
+            dropout (float, optional): the dropout probability. Default 0.25
+            data_type (str, optional): the dataset for which the data should be trained.
         
         """
         super().__init__()

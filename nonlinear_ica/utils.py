@@ -5,9 +5,20 @@ import torch
 import torch.nn as nn
 from torch.utils.data import Dataset
 
+from torch.utils.tensorboard import SummaryWriter
+from torch.optim import Adam, SGD
 
 class CelebA_dataset(Dataset):
     def __init__(self, data):
+        """
+        Class for CelebA dataset processing.
+        
+        The __getitem__ method provides a tuple of an image, u (one-hot encoded attributes), and u_star (permuted one-hot encoded atrributes).
+        
+        Args:
+            data (torchvision.datasets.celeba.CelebA): CelebA dataset
+        
+        """
         super().__init__()
         self.data = data
         self.u_star = data.attr[torch.randperm(data.attr.shape[0])]
@@ -25,6 +36,15 @@ class CelebA_dataset(Dataset):
     
 class MNIST_dataset(Dataset):
     def __init__(self, data):
+        """
+        Class for MNIST dataset processing.
+        
+        The __getitem__ method provides a tuple of an image, u (one-hot encoded attributes), and u_star (permuted one-hot encoded atrributes).
+        
+        Args:
+            data ( torchvision.datasets.mnist.MNIST): MNIST dataset
+       
+        """
         super().__init__()
         self.data = data
         self.u_star = data.targets[torch.randperm(len(data.targets))]
@@ -42,7 +62,15 @@ class MNIST_dataset(Dataset):
 
 
 
-def train_model(model, train_dataloader, test_dataloader, epochs=30):
+def train_model(model, train_dataloader, test_dataloader, log_dir, epochs=30, lr=0.01, optimizer="SGD", device='cuda:9'):
+    writer = SummaryWriter(log_dir)
+    
+    if optimizer == "SGD":
+        optimizer = SGD(model.parameters(), lr=lr)
+    elif optimizer == "Adam":
+        optimizer = Adam(model.parameters(), lr=lr)
+    criterion = nn.BCEWithLogitsLoss()
+    
     for epoch in tqdm(range(epochs), desc="Training on epoch"):
         model.train()
         for i, batch in enumerate(train_dataloader):
