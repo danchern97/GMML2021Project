@@ -1,0 +1,4 @@
+nonlinear_ica/logs/*
+nonlinear_ica/__pycache__/*
+.env_gmml/*
+nonlinear_ica/data/*
