@@ -3,7 +3,7 @@ Project on Skoltech course "Geometric Methods in Machine Learning" on topic "Dis
 
 | ![MNIST](https://i.imgur.com/TONdCeH.png) |
 |:--:| 
-| *Gradual change of one feature of NonlinearICA model on MNIST, responsible for line thickness.* |
+| *Gradual change of one feature, responsible for line thickness. NonlinearICA model on MNIST.* |
 
 
 ## Authors
