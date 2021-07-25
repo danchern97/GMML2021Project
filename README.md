@@ -29,7 +29,7 @@ For InfoGAN training, please refer to [InfoGAN folder](https://github.com/danche
 
 Already pretrained models for MNIST and CelebA can be found [here](https://drive.google.com/drive/folders/1_AehTiuZSL6mJ-9MEquCoZtRuB6t879q?usp=sharing).
 
-## Papers 
+## Citation 
 
 ```
 @inproceedings{hyvarinen2019nonlinear,
@@ -40,9 +40,7 @@ Already pretrained models for MNIST and CelebA can be found [here](https://drive
   year={2019},
   organization={PMLR}
 }
-```
 
-```
 @inproceedings{chen2016infogan,
   title={Infogan: Interpretable representation learning by information maximizing generative adversarial nets},
   author={Chen, Xi and Duan, Yan and Houthooft, Rein and Schulman, John and Sutskever, Ilya and Abbeel, Pieter},
