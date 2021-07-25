@@ -28,3 +28,22 @@ For InfoGAN training, please refer to [InfoGAN folder](https://github.com/danche
 ## Pretrained models
 
 Already pretrained models for MNIST and CelebA can be found [here](https://drive.google.com/drive/folders/1_AehTiuZSL6mJ-9MEquCoZtRuB6t879q?usp=sharing).
+
+## Papers 
+
+`@inproceedings{hyvarinen2019nonlinear,
+  title={Nonlinear ICA using auxiliary variables and generalized contrastive learning},
+  author={Hyvarinen, Aapo and Sasaki, Hiroaki and Turner, Richard},
+  booktitle={The 22nd International Conference on Artificial Intelligence and Statistics},
+  pages={859--868},
+  year={2019},
+  organization={PMLR}
+}`
+
+`@inproceedings{chen2016infogan,
+  title={Infogan: Interpretable representation learning by information maximizing generative adversarial nets},
+  author={Chen, Xi and Duan, Yan and Houthooft, Rein and Schulman, John and Sutskever, Ilya and Abbeel, Pieter},
+  booktitle={Proceedings of the 30th International Conference on Neural Information Processing Systems},
+  pages={2180--2188},
+  year={2016}
+}`
